@@ -1,0 +1,396 @@
+list_len:
+	endbr64
+	xorl	%eax, %eax
+	testq	%rdi, %rdi
+	je	.L4
+.L3:
+	movq	(%rdi), %rdi
+	addq	$1, %rax
+	testq	%rdi, %rdi
+	jne	.L3
+	ret
+
+.L4:
+	ret
+
+list_len_clear:
+	endbr64
+	xorl	%eax, %eax
+	testq	%rdi, %rdi
+	je	.L11
+.L10:
+	movq	$0, 8(%rdi)
+	movq	(%rdi), %rdi
+	addq	$1, %rax
+	testq	%rdi, %rdi
+	jne	.L10
+	ret
+
+.L11:
+	ret
+
+list_sum_clear:
+	endbr64
+	xorl	%eax, %eax
+	testq	%rdi, %rdi
+	je	.L17
+.L16:
+	addq	8(%rdi), %rax
+	movq	$0, 8(%rdi)
+	movq	(%rdi), %rdi
+	testq	%rdi, %rdi
+	jne	.L16
+	ret
+
+.L17:
+	ret
+
+list_sum:
+	endbr64
+	xorl	%eax, %eax
+	testq	%rdi, %rdi
+	je	.L23
+.L22:
+	addq	8(%rdi), %rax
+	movq	(%rdi), %rdi
+	testq	%rdi, %rdi
+	jne	.L22
+	ret
+
+.L23:
+	ret
+
+list_sum2:
+	endbr64
+	xorl	%eax, %eax
+	testq	%rdi, %rdi
+	je	.L29
+.L28:
+	movq	%rdi, %rdx
+	movq	(%rdi), %rdi
+	addq	8(%rdx), %rax
+	testq	%rdi, %rdi
+	jne	.L28
+	ret
+
+.L29:
+	ret
+
+pipe_sum2:
+	endbr64
+	jmp	list_sum2
+rlist_len:
+	endbr64
+	movl	$1, %eax
+	xorl	%r8d, %r8d
+	testq	%rdi, %rdi
+	je	.L33
+.L34:
+	movq	(%rdi), %rdi
+	movq	%rax, %r8
+	addq	$1, %rax
+	testq	%rdi, %rdi
+	jne	.L34
+.L33:
+	movq	%r8, %rax
+	ret
+
+rlist_sum:
+	endbr64
+	xorl	%eax, %eax
+	testq	%rdi, %rdi
+	je	.L49
+.L42:
+	movq	8(%rdi), %rdx
+	movq	(%rdi), %rdi
+	addq	%rdx, %rax
+	testq	%rdi, %rdi
+	jne	.L42
+.L49:
+	ret
+
+list_copy:
+	endbr64
+	jmp	.L66
+.L67:
+	movq	8(%rdi), %rax
+	movq	(%rdi), %rdi
+	movq	%rax, 8(%rsi)
+	movq	(%rsi), %rsi
+.L66:
+	testq	%rdi, %rdi
+	je	.L64
+	testq	%rsi, %rsi
+	jne	.L67
+.L64:
+	ret
+
+plist_copy2:
+	endbr64
+	jmp	.L84
+.L85:
+	movq	%rdi, %rdx
+	movq	%rsi, %rax
+	movq	(%rdi), %rdi
+	movq	(%rsi), %rsi
+	movq	8(%rdx), %rdx
+	movq	%rdx, 8(%rax)
+.L84:
+	testq	%rdi, %rdi
+	je	.L82
+	testq	%rsi, %rsi
+	jne	.L85
+.L82:
+	ret
+
+stationary_copy:
+	endbr64
+	movl	$1024, %eax
+.L87:
+	movq	8(%rdi), %rdx
+	movq	%rdx, 8(%rsi)
+	subq	$1, %rax
+	jne	.L87
+	ret
+
+test:
+	endbr64
+	pushq	%rbp
+	leaq	test_fun(%rip), %rax
+	pushq	%rbx
+	leaq	-1(%rdi), %rbx
+	leaq	main_list(%rip), %rdi
+	salq	$4, %rbx
+	addq	%rdi, %rbx
+	subq	$8, %rsp
+	movq	(%rbx), %rbp
+	movq	myindex(%rip), %rdx
+	movq	$0, (%rbx)
+	call	*(%rax,%rdx,8)
+	movq	%rbp, (%rbx)
+	addq	$8, %rsp
+	popq	%rbx
+	popq	%rbp
+	ret
+
+test2a:
+	endbr64
+	pushq	%rbp
+	leaq	test2_fun(%rip), %rax
+	pushq	%rbx
+	leaq	-1(%rdi), %rbx
+	leaq	main_list(%rip), %rdi
+	salq	$4, %rbx
+	movq	%rdi, %rsi
+	addq	%rdi, %rbx
+	subq	$8, %rsp
+	movq	(%rbx), %rbp
+	movq	myindex(%rip), %rdx
+	movq	$0, (%rbx)
+	call	*(%rax,%rdx,8)
+	movq	%rbp, (%rbx)
+	addq	$8, %rsp
+	popq	%rbx
+	popq	%rbp
+	ret
+
+test2b:
+	endbr64
+	pushq	%rbp
+	leaq	test2_fun(%rip), %rax
+	pushq	%rbx
+	leaq	-1(%rdi), %rbx
+	leaq	main_list(%rip), %rdi
+	salq	$4, %rbx
+	addq	%rdi, %rbx
+	subq	$8, %rsp
+	movq	(%rbx), %rbp
+	movq	myindex(%rip), %rdx
+	movq	$0, (%rbx)
+	movq	main_list(%rip), %rsi
+	call	*(%rax,%rdx,8)
+	movq	%rbp, (%rbx)
+	addq	$8, %rsp
+	popq	%rbx
+	popq	%rbp
+	ret
+
+test2c:
+	endbr64
+	pushq	%rbp
+	leaq	main_list(%rip), %rsi
+	leaq	test2_fun(%rip), %rax
+	pushq	%rbx
+	leaq	-1(%rdi), %rbx
+	salq	$4, %rbx
+	addq	%rsi, %rbx
+	subq	$8, %rsp
+	movq	(%rbx), %rbp
+	movq	myindex(%rip), %rdx
+	movq	$0, (%rbx)
+	movq	main_list(%rip), %rdi
+	call	*(%rax,%rdx,8)
+	movq	%rbp, (%rbx)
+	addq	$8, %rsp
+	popq	%rbx
+	popq	%rbp
+	ret
+
+plist_copy:
+	endbr64
+	jmp	.L107
+.L108:
+	movq	%rdi, %rdx
+	movq	%rsi, %rax
+	movq	(%rdi), %rdi
+	movq	(%rsi), %rsi
+	movq	8(%rdx), %rdx
+	movq	%rdx, 8(%rax)
+.L107:
+	testq	%rdi, %rdi
+	je	.L105
+	testq	%rsi, %rsi
+	jne	.L108
+.L105:
+	ret
+
+mylink:
+	endbr64
+	subq	$1, %rdi
+	testq	%rdi, %rdi
+	jle	.L110
+	leaq	16+main_list(%rip), %rax
+	xorl	%edx, %edx
+.L111:
+	movq	%rdx, -8(%rax)
+	addq	$1, %rdx
+	movq	%rax, -16(%rax)
+	addq	$16, %rax
+	cmpq	%rdi, %rdx
+	jne	.L111
+.L110:
+	movq	%rdi, %rdx
+	leaq	main_list(%rip), %rax
+	salq	$4, %rdx
+	addq	%rdx, %rax
+	movq	%rdi, 8(%rax)
+	movq	$0, (%rax)
+	ret
+
+main:
+	endbr64
+	pushq	%r15
+	leaq	list_len(%rip), %rcx
+	leaq	16+main_list(%rip), %r15
+	pushq	%r14
+	pushq	%r13
+	pushq	%r12
+	leaq	test_fun(%rip), %r12
+	pushq	%rbp
+	leaq	test_descr(%rip), %rbp
+	pushq	%rbx
+	xorl	%ebx, %ebx
+	subq	$8, %rsp
+.L116:
+	leaq	16+main_list(%rip), %rax
+	xorl	%edx, %edx
+.L114:
+	movq	%rdx, -8(%rax)
+	addq	$1, %rdx
+	movq	%rax, -16(%rax)
+	addq	$16, %rax
+	cmpq	$1023, %rdx
+	jne	.L114
+	leaq	main_list(%rip), %rdi
+	movq	$1023, 16376+main_list(%rip)
+	movq	$0, 16368+main_list(%rip)
+	call	*%rcx
+	movq	0(%rbp,%rbx,8), %rdx
+	movl	$1024, %ecx
+	leaq	.LC2(%rip), %rsi
+	movq	%rax, %r8
+	movl	$1, %edi
+	xorl	%eax, %eax
+	call	__printf_chk@PLT
+	movl	$1024, %esi
+	leaq	test(%rip), %rdi
+	movq	%rbx, myindex(%rip)
+	call	find_cpe@PLT
+	addq	$1, %rbx
+	movl	$1, %edi
+	leaq	.LC3(%rip), %rsi
+	movl	$1, %eax
+	call	__printf_chk@PLT
+	cmpq	$8, %rbx
+	je	.L121
+	movq	(%r12,%rbx,8), %rcx
+	jmp	.L116
+.L121:
+	xorl	%ebp, %ebp
+	leaq	.LC1(%rip), %r12
+	leaq	.LC4(%rip), %r13
+.L115:
+	leaq	case2_descr(%rip), %r14
+	leaq	case_fun(%rip), %rbx
+	leaq	.LC0(%rip), %rcx
+.L120:
+	movq	%r15, %rax
+	xorl	%edx, %edx
+.L117:
+	movq	%rdx, -8(%rax)
+	addq	$1, %rdx
+	movq	%rax, -16(%rax)
+	addq	$16, %rax
+	cmpq	$1023, %rdx
+	jne	.L117
+	movq	%r12, %rdx
+	movq	%r13, %rsi
+	movl	$1, %edi
+	xorl	%eax, %eax
+	movq	$1023, 16376+main_list(%rip)
+	addq	$8, %r14
+	addq	$8, %rbx
+	movq	$0, 16368+main_list(%rip)
+	call	__printf_chk@PLT
+	movq	-8(%rbx), %rdi
+	movl	$1024, %esi
+	movq	%rbp, myindex(%rip)
+	call	find_cpe@PLT
+	movl	$1, %edi
+	movl	$1, %eax
+	leaq	.LC3(%rip), %rsi
+	call	__printf_chk@PLT
+	leaq	24+case2_descr(%rip), %rax
+	cmpq	%rax, %r14
+	je	.L125
+	movq	(%r14), %rcx
+	jmp	.L120
+.L125:
+	addq	$1, %rbp
+	cmpq	$4, %rbp
+	je	.L119
+	leaq	test2_descr(%rip), %rax
+	movq	(%rax,%rbp,8), %r12
+	jmp	.L115
+.L119:
+	addq	$8, %rsp
+	xorl	%eax, %eax
+	popq	%rbx
+	popq	%rbp
+	popq	%r12
+	popq	%r13
+	popq	%r14
+	popq	%r15
+	ret
+
+case2_descr:
+case_fun:
+test2_descr:
+test2_fun:
+test_descr:
+test_fun:
+0:
+1:
+2:
+3:
+4:

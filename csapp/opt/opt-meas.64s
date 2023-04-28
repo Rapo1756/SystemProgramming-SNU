@@ -1,0 +1,286 @@
+t1:
+	endbr64
+	testq	%rdi, %rdi
+	jle	.L4
+	vmovsd	.LC0(%rip), %xmm0
+	leaq	a(%rip), %rax
+	xorl	%edx, %edx
+.L3:
+	vmulsd	(%rax), %xmm0, %xmm0
+	addq	$3, %rdx
+	addq	$24, %rax
+	vmulsd	-16(%rax), %xmm0, %xmm0
+	vmulsd	-8(%rax), %xmm0, %xmm0
+	cmpq	%rdx, %rdi
+	jg	.L3
+	vmovsd	%xmm0, sink(%rip)
+	ret
+
+.L4:
+	vmovsd	.LC0(%rip), %xmm0
+	vmovsd	%xmm0, sink(%rip)
+	ret
+
+t2:
+	endbr64
+	testq	%rdi, %rdi
+	jle	.L10
+	vmovsd	.LC0(%rip), %xmm0
+	leaq	a(%rip), %rax
+	xorl	%edx, %edx
+.L9:
+	vmovsd	(%rax), %xmm1
+	vmulsd	8(%rax), %xmm1, %xmm1
+	addq	$3, %rdx
+	addq	$24, %rax
+	vmulsd	%xmm0, %xmm1, %xmm0
+	vmulsd	-8(%rax), %xmm0, %xmm0
+	cmpq	%rdx, %rdi
+	jg	.L9
+	vmovsd	%xmm0, sink(%rip)
+	ret
+
+.L10:
+	vmovsd	.LC0(%rip), %xmm0
+	vmovsd	%xmm0, sink(%rip)
+	ret
+
+t3:
+	endbr64
+	testq	%rdi, %rdi
+	jle	.L15
+	vmovsd	.LC0(%rip), %xmm1
+	leaq	a(%rip), %rax
+	xorl	%edx, %edx
+.L14:
+	vmovsd	(%rax), %xmm0
+	vmulsd	8(%rax), %xmm0, %xmm0
+	addq	$3, %rdx
+	addq	$24, %rax
+	vmulsd	-8(%rax), %xmm0, %xmm0
+	vmulsd	%xmm0, %xmm1, %xmm1
+	cmpq	%rdx, %rdi
+	jg	.L14
+	vmovsd	%xmm1, sink(%rip)
+	ret
+
+.L15:
+	vmovsd	.LC0(%rip), %xmm1
+	vmovsd	%xmm1, sink(%rip)
+	ret
+
+t4:
+	endbr64
+	testq	%rdi, %rdi
+	jle	.L20
+	vmovsd	.LC0(%rip), %xmm1
+	leaq	a(%rip), %rax
+	xorl	%edx, %edx
+.L19:
+	vmovsd	8(%rax), %xmm0
+	vmulsd	16(%rax), %xmm0, %xmm0
+	addq	$3, %rdx
+	addq	$24, %rax
+	vmulsd	-24(%rax), %xmm0, %xmm0
+	vmulsd	%xmm0, %xmm1, %xmm1
+	cmpq	%rdx, %rdi
+	jg	.L19
+	vmovsd	%xmm1, sink(%rip)
+	ret
+
+.L20:
+	vmovsd	.LC0(%rip), %xmm1
+	vmovsd	%xmm1, sink(%rip)
+	ret
+
+t5:
+	endbr64
+	testq	%rdi, %rdi
+	jle	.L25
+	vmovsd	.LC0(%rip), %xmm0
+	leaq	a(%rip), %rax
+	xorl	%edx, %edx
+.L24:
+	vmulsd	(%rax), %xmm0, %xmm0
+	vmovsd	8(%rax), %xmm1
+	addq	$3, %rdx
+	addq	$24, %rax
+	vmulsd	-8(%rax), %xmm1, %xmm1
+	vmulsd	%xmm0, %xmm1, %xmm0
+	cmpq	%rdx, %rdi
+	jg	.L24
+	vmovsd	%xmm0, sink(%rip)
+	ret
+
+.L25:
+	vmovsd	.LC0(%rip), %xmm0
+	vmovsd	%xmm0, sink(%rip)
+	ret
+
+aprod:
+	endbr64
+	leaq	-2(%rsi), %rdx
+	vmovsd	.LC0(%rip), %xmm0
+	xorl	%eax, %eax
+	testq	%rdx, %rdx
+	jle	.L28
+.L29:
+	vmulsd	(%rdi,%rax,8), %xmm0, %xmm0
+	vmulsd	8(%rdi,%rax,8), %xmm0, %xmm0
+	vmulsd	16(%rdi,%rax,8), %xmm0, %xmm0
+	addq	$3, %rax
+	cmpq	%rdx, %rax
+	jl	.L29
+.L28:
+	cmpq	%rax, %rsi
+	jle	.L35
+	leaq	(%rdi,%rax,8), %rax
+	leaq	(%rdi,%rsi,8), %rdx
+.L31:
+	vmulsd	(%rax), %xmm0, %xmm0
+	addq	$8, %rax
+	cmpq	%rax, %rdx
+	jne	.L31
+.L35:
+	ret
+
+aprod1:
+	endbr64
+	vmovsd	.LC0(%rip), %xmm0
+	testq	%rsi, %rsi
+	jle	.L39
+	xorl	%eax, %eax
+.L38:
+	vmulsd	(%rdi,%rax,8), %xmm0, %xmm0
+	vmulsd	8(%rdi,%rax,8), %xmm0, %xmm0
+	vmulsd	16(%rdi,%rax,8), %xmm0, %xmm0
+	addq	$3, %rax
+	cmpq	%rax, %rsi
+	jg	.L38
+	ret
+
+.L39:
+	ret
+
+aprod2:
+	endbr64
+	vmovsd	.LC0(%rip), %xmm0
+	testq	%rsi, %rsi
+	jle	.L45
+	xorl	%eax, %eax
+.L44:
+	vmovsd	(%rdi,%rax,8), %xmm1
+	vmulsd	8(%rdi,%rax,8), %xmm1, %xmm1
+	vmulsd	%xmm0, %xmm1, %xmm0
+	vmulsd	16(%rdi,%rax,8), %xmm0, %xmm0
+	addq	$3, %rax
+	cmpq	%rax, %rsi
+	jg	.L44
+	ret
+
+.L45:
+	ret
+
+aprod3:
+	endbr64
+	vmovsd	.LC0(%rip), %xmm1
+	testq	%rsi, %rsi
+	jle	.L48
+	xorl	%eax, %eax
+.L50:
+	vmovsd	(%rdi,%rax,8), %xmm0
+	vmulsd	8(%rdi,%rax,8), %xmm0, %xmm0
+	vmulsd	16(%rdi,%rax,8), %xmm0, %xmm0
+	addq	$3, %rax
+	vmulsd	%xmm0, %xmm1, %xmm1
+	cmpq	%rax, %rsi
+	jg	.L50
+.L48:
+	vmovapd	%xmm1, %xmm0
+	ret
+
+aprod4:
+	endbr64
+	vmovsd	.LC0(%rip), %xmm1
+	testq	%rsi, %rsi
+	jle	.L53
+	xorl	%eax, %eax
+.L55:
+	vmovsd	8(%rdi,%rax,8), %xmm0
+	vmulsd	16(%rdi,%rax,8), %xmm0, %xmm0
+	vmulsd	(%rdi,%rax,8), %xmm0, %xmm0
+	addq	$3, %rax
+	vmulsd	%xmm0, %xmm1, %xmm1
+	cmpq	%rax, %rsi
+	jg	.L55
+.L53:
+	vmovapd	%xmm1, %xmm0
+	ret
+
+aprod5:
+	endbr64
+	vmovsd	.LC0(%rip), %xmm0
+	testq	%rsi, %rsi
+	jle	.L61
+	xorl	%eax, %eax
+.L60:
+	vmulsd	(%rdi,%rax,8), %xmm0, %xmm0
+	vmovsd	8(%rdi,%rax,8), %xmm1
+	vmulsd	16(%rdi,%rax,8), %xmm1, %xmm1
+	addq	$3, %rax
+	vmulsd	%xmm0, %xmm1, %xmm0
+	cmpq	%rax, %rsi
+	jg	.L60
+	ret
+
+.L61:
+	ret
+
+main:
+	endbr64
+	subq	$8, %rsp
+	movl	$1024, %esi
+	leaq	t1(%rip), %rdi
+	call	find_cpe@PLT
+	movl	$1, %edi
+	movl	$1, %eax
+	leaq	.LC1(%rip), %rsi
+	call	__printf_chk@PLT
+	movl	$1024, %esi
+	leaq	t2(%rip), %rdi
+	call	find_cpe@PLT
+	movl	$1, %edi
+	movl	$1, %eax
+	leaq	.LC2(%rip), %rsi
+	call	__printf_chk@PLT
+	movl	$1024, %esi
+	leaq	t3(%rip), %rdi
+	call	find_cpe@PLT
+	movl	$1, %edi
+	movl	$1, %eax
+	leaq	.LC3(%rip), %rsi
+	call	__printf_chk@PLT
+	movl	$1024, %esi
+	leaq	t4(%rip), %rdi
+	call	find_cpe@PLT
+	movl	$1, %edi
+	movl	$1, %eax
+	leaq	.LC4(%rip), %rsi
+	call	__printf_chk@PLT
+	movl	$1024, %esi
+	leaq	t5(%rip), %rdi
+	call	find_cpe@PLT
+	movl	$1, %edi
+	movl	$1, %eax
+	leaq	.LC5(%rip), %rsi
+	call	__printf_chk@PLT
+	xorl	%eax, %eax
+	addq	$8, %rsp
+	ret
+
+sink:
+0:
+1:
+2:
+3:
+4:

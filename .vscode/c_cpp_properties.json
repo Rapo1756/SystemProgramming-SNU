@@ -1,0 +1,40 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}",
+                "/usr/lib/gcc/x86_64-linux-gnu/9/include",
+                "/usr/src/linux-headers-5.15.0-67-generic/include",
+                "/usr/src/linux-headers-5.15.0-67-generic/include/uapi",
+                "/usr/src/linux-headers-5.15.0-67-generic/include/asm-generic",
+                "/usr/src/linux-headers-5.15.0-67-generic/include/generated",
+                "/usr/src/linux-headers-5.15.0-67-generic/include/generated/uapi",
+                "/usr/src/linux-headers-5.15.0-67-generic/arch/x86/include",
+                "/usr/src/linux-headers-5.15.0-67-generic/arch/x86/include/asm",
+                "/usr/src/linux-headers-5.15.0-67-generic/arch/x86/include/uapi",
+                "/usr/src/linux-headers-5.15.0-67-generic/arch/x86/include/generated",
+                "/usr/src/linux-headers-5.15.0-67-generic/arch/x86/include/generated/uapi",
+                "/usr/src/linux-headers-5.15.0-67-generic/ubuntu/include"
+            ],
+            "defines": [
+                "__KERNEL__",
+                "MODULE"
+            ],
+            "intelliSenseMode": "linux-gcc-x64",
+            "browse": {
+                "path": [
+                    "${workspaceFolder}",
+                    "/usr/src/linux-headers-5.15.0-67-generic/include",
+                    "/usr/src/linux-headers-5.15.0-67-generic/mm",
+                    "/usr/src/linux-headers-5.15.0-67-generic/fs",
+                    "/usr/src/linux-headers-5.15.0-67-generic/kernel"
+                ],
+                "limitSymbolsToIncludedHeaders": true,
+                "databaseFilename": ""
+            },
+            "compilerPath": "/usr/bin/gcc"
+        }
+    ],
+    "version": 4
+}
